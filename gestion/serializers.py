@@ -7,14 +7,31 @@ class CicloSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AlumnoSerializer(serializers.ModelSerializer):
-    # Esto permite ver el nombre del ciclo en el JSON
     ciclo_nombre = serializers.ReadOnlyField(source='ciclo.ciclo')
+    ciclo = serializers.PrimaryKeyRelatedField(
+        queryset=Ciclo.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
+    def to_internal_value(self, data):
+        # Si ciclo llega como texto (nombre), lo convertimos al ID
+        ciclo_val = data.get('ciclo')
+        if ciclo_val and isinstance(ciclo_val, str) and not ciclo_val.isdigit():
+            try:
+                ciclo_obj = Ciclo.objects.get(ciclo__iexact=ciclo_val)
+                data = data.copy()
+                data['ciclo'] = ciclo_obj.pk
+            except Ciclo.DoesNotExist:
+                # Si no existe el ciclo, lo creamos
+                ciclo_obj = Ciclo.objects.create(ciclo=ciclo_val)
+                data = data.copy()
+                data['ciclo'] = ciclo_obj.pk
+        return super().to_internal_value(data)
 
     class Meta:
         model = Alumno
         fields = '__all__'
-
-# --- ESTO ES LO QUE TE FALTA ---
 
 class EmpresaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,8 +39,7 @@ class EmpresaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AsignacionSerializer(serializers.ModelSerializer):
-    # Para que el JS vea nombres reales y no solo números de ID
-    alumno_nombre = serializers.ReadOnlyField(source='alumno.nombre') 
+    alumno_nombre = serializers.ReadOnlyField(source='alumno.nombre')
     empresa_nombre = serializers.ReadOnlyField(source='empresa.nombre')
 
     class Meta:
