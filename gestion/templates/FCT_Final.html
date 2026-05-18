@@ -176,6 +176,10 @@ tbody td{padding:8px 10px;vertical-align:middle}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:900px){.login-left{display:none}.login-right{width:100%}.sidebar{transform:translateX(-100%);transition:transform .3s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.content{padding:16px 13px}.topbar{padding:0 14px}.g2{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
 </head>
 <body>
 
@@ -1353,6 +1357,88 @@ async function inicializarApp() {
 
 // --- 4. DISPARADOR ÚNICO ---
 document.addEventListener('DOMContentLoaded', inicializarApp);
+
+
+
+async function expEx(tipo) {
+    const response = await fetch('/api/get-datos-fct/');
+    const data = await response.json();
+    const { headers, rows, nombre } = getDatosExport(tipo, data);
+
+    const wsData = [headers, ...rows];
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    ws['!cols'] = headers.map((h, i) => ({
+        wch: Math.max(h.length, ...rows.map(r => String(r[i] || '').length)) + 2
+    }));
+    XLSX.utils.book_append_sheet(wb, ws, nombre);
+    XLSX.writeFile(wb, `${nombre}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+async function expPDF(tipo) {
+    const response = await fetch('/api/get-datos-fct/');
+    const data = await response.json();
+    const { jsPDF } = window.jspdf;
+    const { headers, rows, nombre } = getDatosExport(tipo, data);
+
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    doc.setFontSize(14);
+    doc.setTextColor(5, 46, 22);
+    doc.text(nombre.toUpperCase(), 40, 40);
+    doc.setFontSize(9);
+    doc.setTextColor(107, 114, 128);
+    doc.text(`Exportado el ${new Date().toLocaleDateString('es-ES')}`, 40, 56);
+    doc.autoTable({
+        head: [headers],
+        body: rows,
+        startY: 68,
+        styles: { fontSize: 7, cellPadding: 3, overflow: 'linebreak' },
+        headStyles: { fillColor: [22, 163, 74], textColor: 255, fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [240, 253, 244] },
+        margin: { left: 40, right: 40 },
+    });
+    doc.save(`${nombre}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+function getDatosExport(tipo, data) {
+    const als = data.alumnos || [];
+    const ems = data.empresas || [];
+    const ass = data.asignaciones || [];
+
+    if (tipo === 'alumnos') {
+        const headers = ['AÑO','CURSO','ID','DNI','APELLIDOS','NOMBRE','FECHA NTO','POBLACIÓN','TLF MÓVIL','ID CICLO','GRADO','TURNO','NÚM ALUMNO'];
+        const rows = als.map(a => [
+            a.ano || '', a.curso || '', a.id || '', a.dni || '',
+            a.apellidos || '', a.nombre || '', a.fecha_nto || '',
+            a.poblacion || '', a.tlf_movil || '', a.ciclo || '',
+            a.grado || '', a.turno || '', a.num_alumno || ''
+        ]);
+        return { headers, rows, nombre: 'Alumnos' };
+
+    } else if (tipo === 'empresas') {
+        const headers = ['ID','EMPRESA','CIF','REPRESENTANTE','DIRECCIÓN','CIUDAD','C.P.','CONTACTO','TUTOR','TELÉFONO','EMAIL','FECHA CONVENIO'];
+        const rows = ems.map(e => [
+            e.id || '', e.nombre || '', e.cif || '', e.representante || '',
+            e.direccion || '', e.ciudad || '', e.cp || '', e.contacto || '',
+            e.tutor_empresa || '', e.tel || '', e.email || '', e.fecha_convenio || ''
+        ]);
+        return { headers, rows, nombre: 'Empresas' };
+
+    } else {
+        const headers = ['ID','ALUMNO','APELLIDOS','EMPRESA','ANEXO','INICIO','FIN','HORAS','FECHA FIRMA'];
+        const rows = ass.map(a => {
+            const al = als.find(x => x.id === a.alumnoId) || {};
+            const em = ems.find(x => x.id === a.empresaId) || {};
+            return [
+                a.id || '', al.nombre || '', al.apellidos || '',
+                em.nombre || '', a.obs || '', a.inicio || '',
+                a.fin || '', a.horasComp ?? a.horas ?? '', a.fechaFirma || ''
+            ];
+        });
+        return { headers, rows, nombre: 'Asignaciones' };
+    }
+}
+
 </script>
 </body>
 </html>
