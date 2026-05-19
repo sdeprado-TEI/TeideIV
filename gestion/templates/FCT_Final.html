@@ -1347,13 +1347,19 @@ function aplicarPermisosSegunRol() {
 // --- 3. INICIALIZACIÓN (EL MOTOR ÚNICO) ---
 
 async function inicializarApp() {
-    // Si Django ya autenticó al usuario, saltamos el login JS y mostramos la app
     const djangoAutenticado = USER_ROLE && USER_ROLE !== "None" && USER_ROLE !== "";
+
+    // Si Django ya autenticó al usuario: mostrar app, menú y dashboard al instante
     if (djangoAutenticado) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
+        aplicarPermisosSegunRol();
+        renderNav();
+        renderAll();
+        showP('dashboard', document.querySelector('.nav-item'));
     }
 
+    // Cargar datos desde la API (en paralelo con lo anterior)
     try {
         const response = await fetch('/api/get-datos-fct/');
         if (response.ok) {
@@ -1361,20 +1367,11 @@ async function inicializarApp() {
             if (data.alumnos && data.alumnos.length > 0) alumnos = data.alumnos;
             if (data.empresas && data.empresas.length > 0) empresas = data.empresas;
             if (data.asignaciones) asignaciones = data.asignaciones.map(normalizeAsignacion);
+            alumnos = alumnos.filter(a => a.curso && a.curso >= "20-21");
+            renderAll(); // actualizar tablas con los datos reales
         }
-
-        alumnos = alumnos.filter(a => a.curso && a.curso >= "20-21");
-        aplicarPermisosSegunRol();
-        renderNav();
-        renderAll();
-        if (djangoAutenticado) showP('dashboard', document.querySelector('.nav-item'));
-
     } catch (error) {
         console.warn("Error al conectar con la API:", error);
-        aplicarPermisosSegunRol();
-        renderNav();
-        renderAll();
-        if (djangoAutenticado) showP('dashboard', document.querySelector('.nav-item'));
     }
 }
 
