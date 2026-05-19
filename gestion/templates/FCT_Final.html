@@ -1099,8 +1099,8 @@ async function saveAl(){
     });
     if(res.ok){
       const saved = await res.json();
-      if(id){ Object.assign(alumnos.find(x=>x.id==id), saved); toast('Alumno actualizado','ok'); }
-      else { alumnos.push(saved); toast('Alumno añadido','ok'); }
+      if(id){ Object.assign(alumnos.find(x=>x.id==id), saved); toast(`Alumno actualizado (ID: ${saved.id})`,'ok'); }
+      else { alumnos.push(saved); toast(`Alumno creado correctamente (ID: ${saved.id})`,'ok'); }
       closeM('modal-al'); renderAll();
     } else {
       toast('Error al guardar el alumno','err');
@@ -1161,8 +1161,8 @@ async function saveEm(){
   const res=await fetch(url,{method,headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},body:JSON.stringify(o)});
   if(res.ok){
    const saved=await res.json();
-   if(id){Object.assign(empresas.find(x=>x.id==id),saved);toast('Empresa actualizada','ok');}
-   else{empresas.push(saved);toast('Empresa añadida','ok');}
+   if(id){Object.assign(empresas.find(x=>x.id==id),saved);toast(`Empresa actualizada (ID: ${saved.id})`,'ok');}
+   else{empresas.push(saved);toast(`Empresa creada correctamente (ID: ${saved.id})`,'ok');}
    closeM('modal-em');renderAll();
   }else{toast('Error al guardar la empresa','err');}
  }catch(e){toast('Error de conexión','err');}
@@ -1216,8 +1216,8 @@ async function saveAs(){
   if(res.ok){
    const saved=await res.json();
    const norm=normalizeAsignacion(saved);
-   if(id){Object.assign(asignaciones.find(x=>x.id==id),norm);toast('Asignación actualizada','ok');}
-   else{asignaciones.push(norm);toast('Asignación creada','ok');}
+   if(id){Object.assign(asignaciones.find(x=>x.id==id),norm);toast(`Asignación actualizada (ID: ${norm.id})`,'ok');}
+   else{asignaciones.push(norm);toast(`Asignación creada correctamente (ID: ${norm.id})`,'ok');}
    closeM('modal-asig');renderAll();
   }else{toast('Error al guardar la asignación','err');}
  }catch(e){toast('Error de conexión','err');}
