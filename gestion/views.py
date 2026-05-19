@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Alumno, Empresa, Asignacion
 from .serializers import AlumnoSerializer, EmpresaSerializer, AsignacionSerializer
@@ -12,12 +13,16 @@ from .serializers import AlumnoSerializer, EmpresaSerializer, AsignacionSerializ
 # ── DATOS GENERALES ────────────────────────────────────────────────────────────
 
 @api_view(['GET'])
-@login_required
+@permission_classes([IsAuthenticated])
 def get_datos_fct(request):
     return Response({
-        'alumnos': AlumnoSerializer(Alumno.objects.all(), many=True).data,
+        'alumnos': AlumnoSerializer(
+            Alumno.objects.select_related('ciclo').all(), many=True
+        ).data,
         'empresas': EmpresaSerializer(Empresa.objects.all(), many=True).data,
-        'asignaciones': AsignacionSerializer(Asignacion.objects.all(), many=True).data,
+        'asignaciones': AsignacionSerializer(
+            Asignacion.objects.select_related('alumno', 'empresa').all(), many=True
+        ).data,
     })
 
 
@@ -61,7 +66,7 @@ def profesor_dashboard(request):
 # ── CRUD ALUMNOS ───────────────────────────────────────────────────────────────
 
 @api_view(['POST'])
-@login_required
+@permission_classes([IsAuthenticated])
 def crear_alumno(request):
     serializer = AlumnoSerializer(data=request.data)
     if serializer.is_valid():
@@ -71,7 +76,7 @@ def crear_alumno(request):
 
 
 @api_view(['PUT', 'PATCH'])
-@login_required
+@permission_classes([IsAuthenticated])
 def editar_alumno(request, pk):
     alumno = get_object_or_404(Alumno, pk=pk)
     serializer = AlumnoSerializer(alumno, data=request.data, partial=True)
@@ -82,7 +87,7 @@ def editar_alumno(request, pk):
 
 
 @api_view(['DELETE'])
-@login_required
+@permission_classes([IsAuthenticated])
 def borrar_alumno(request, pk):
     alumno = get_object_or_404(Alumno, pk=pk)
     alumno.delete()
@@ -92,7 +97,7 @@ def borrar_alumno(request, pk):
 # ── CRUD EMPRESAS ──────────────────────────────────────────────────────────────
 
 @api_view(['POST'])
-@login_required
+@permission_classes([IsAuthenticated])
 def crear_empresa(request):
     serializer = EmpresaSerializer(data=request.data)
     if serializer.is_valid():
@@ -102,7 +107,7 @@ def crear_empresa(request):
 
 
 @api_view(['PUT', 'PATCH'])
-@login_required
+@permission_classes([IsAuthenticated])
 def editar_empresa(request, pk):
     empresa = get_object_or_404(Empresa, pk=pk)
     serializer = EmpresaSerializer(empresa, data=request.data, partial=True)
@@ -113,7 +118,7 @@ def editar_empresa(request, pk):
 
 
 @api_view(['DELETE'])
-@login_required
+@permission_classes([IsAuthenticated])
 def borrar_empresa(request, pk):
     empresa = get_object_or_404(Empresa, pk=pk)
     empresa.delete()
@@ -123,7 +128,7 @@ def borrar_empresa(request, pk):
 # ── CRUD ASIGNACIONES ──────────────────────────────────────────────────────────
 
 @api_view(['POST'])
-@login_required
+@permission_classes([IsAuthenticated])
 def crear_asignacion(request):
     serializer = AsignacionSerializer(data=request.data)
     if serializer.is_valid():
@@ -133,7 +138,7 @@ def crear_asignacion(request):
 
 
 @api_view(['PUT', 'PATCH'])
-@login_required
+@permission_classes([IsAuthenticated])
 def editar_asignacion(request, pk):
     asignacion = get_object_or_404(Asignacion, pk=pk)
     serializer = AsignacionSerializer(asignacion, data=request.data, partial=True)
@@ -144,7 +149,7 @@ def editar_asignacion(request, pk):
 
 
 @api_view(['DELETE'])
-@login_required
+@permission_classes([IsAuthenticated])
 def borrar_asignacion(request, pk):
     asignacion = get_object_or_404(Asignacion, pk=pk)
     asignacion.delete()
