@@ -788,16 +788,14 @@ function login() {
 let usuarioLogueado = { rol: '' };
 
 function entrarSistema(rol, nombre) {
-    usuarioLogueado.rol = rol; // Guardamos el rol (admin o profe)
-
+    usuarioLogueado.rol = rol;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
-    
     document.getElementById('nav-nm').innerText = nombre;
     document.getElementById('nav-rb').innerText = (rol === 'admin') ? 'Gestión Total' : 'Solo Lectura';
-    
-    // Llamamos a renderAll pasando el rol para que sepa qué dibujar
-    if (typeof renderAll === 'function') renderAll();
+    renderNav();
+    renderAll();
+    showP('dashboard', document.querySelector('.nav-item'));
 }
 /*
 function logout() {
@@ -1349,18 +1347,15 @@ function aplicarPermisosSegunRol() {
 // --- 3. INICIALIZACIÓN (EL MOTOR ÚNICO) ---
 
 async function inicializarApp() {
-    // 1. VERIFICACIÓN DE SESIÓN (Comentado para obligar siempre al login visual)
-    /* 
-    if (typeof USER_ROLE !== 'undefined' && USER_ROLE && USER_ROLE !== "None" && USER_ROLE !== "") {
+    // Si Django ya autenticó al usuario, saltamos el login JS y mostramos la app
+    const djangoAutenticado = USER_ROLE && USER_ROLE !== "None" && USER_ROLE !== "";
+    if (djangoAutenticado) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
     }
-    */
 
     try {
-        console.log("Cargando datos desde la API...");
         const response = await fetch('/api/get-datos-fct/');
-        
         if (response.ok) {
             const data = await response.json();
             if (data.alumnos && data.alumnos.length > 0) alumnos = data.alumnos;
@@ -1368,32 +1363,18 @@ async function inicializarApp() {
             if (data.asignaciones) asignaciones = data.asignaciones.map(normalizeAsignacion);
         }
 
-        // 3. FILTROS Y FORMATEO
         alumnos = alumnos.filter(a => a.curso && a.curso >= "20-21");
-        // ... (resto de tus forEach de alumnos y empresas)
-
-        // 4. HIDRATACIÓN Y PERMISOS
-        if (typeof hydrateFechaConvenioFromBbdd === 'function') await hydrateFechaConvenioFromBbdd();
         aplicarPermisosSegunRol();
+        renderNav();
+        renderAll();
+        if (djangoAutenticado) showP('dashboard', document.querySelector('.nav-item'));
 
-        // 5. RENDERIZADO (Solo preparamos las tablas, no las mostramos aún)
-        if (typeof renderNav === 'function') renderNav();
-        if (typeof renderAll === 'function') renderAll();
-        
-        // COMENTAMOS ESTO: No queremos que se abra el dashboard hasta pulsar "Entrar"
-        /*
-        if (typeof showP === 'function') {
-            const dashTab = document.querySelector('.nav-item');
-            showP('dashboard', dashTab);
-        }
-        */
-
-        console.log("App preparada en segundo plano. Esperando login...");
     } catch (error) {
-        console.warn("Error al conectar con la API. Usando datos locales:", error);
+        console.warn("Error al conectar con la API:", error);
         aplicarPermisosSegunRol();
-        if (typeof renderNav === 'function') renderNav();
-        if (typeof renderAll === 'function') renderAll();
+        renderNav();
+        renderAll();
+        if (djangoAutenticado) showP('dashboard', document.querySelector('.nav-item'));
     }
 }
 
