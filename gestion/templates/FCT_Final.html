@@ -1156,7 +1156,8 @@ function assignEm(id){
 // CRUD EMPRESAS 
 async function saveEm(){
  const id=gv('em-eid');
- const o={nombre:gv('em-n'),cif:gv('em-c'),representante:gv('em-r'),direccion:gv('em-d'),ciudad:gv('em-ci'),cp:gv('em-cp'),contacto:gv('em-ct'),tutor_empresa:gv('em-tu'),tel:gv('em-t'),email:gv('em-e'),num_convenio:gv('em-nc')||null,fecha_convenio:gv('em-fc')||null,plazas:parseInt(gv('em-p'))||2};
+ const numConv=parseInt(gv('em-nc'))||null;
+ const o={...(numConv&&!id?{id:numConv}:{}),nombre:gv('em-n'),cif:gv('em-c'),representante:gv('em-r'),direccion:gv('em-d'),ciudad:gv('em-ci'),cp:gv('em-cp'),contacto:gv('em-ct'),tutor_empresa:gv('em-tu'),tel:gv('em-t'),email:gv('em-e'),fecha_convenio:gv('em-fc')||null,plazas:parseInt(gv('em-p'))||2};
  if(!o.nombre||!o.cif){toast('Rellena los campos obligatorios (*)','err');return}
  const url=id?`/api/empresa/editar/${id}/`:'/api/empresa/crear/';
  const method=id?'PUT':'POST';
@@ -1177,7 +1178,7 @@ async function saveEm(){
 function edEm(id){
  const e=empresas.find(x=>x.id===id);
  g('modal-em-t').textContent=' Editar Empresa';
- sv('em-eid',id);sv('em-n',e.nombre);sv('em-c',e.cif);sv('em-r',e.representante);sv('em-d',e.direccion);sv('em-ci',e.ciudad);sv('em-cp',e.cp);sv('em-ct',e.contacto);sv('em-tu',e.tutor_empresa);sv('em-t',e.tel);sv('em-e',e.email);sv('em-nc',e.num_convenio||'');sv('em-fc',e.fecha_convenio);sv('em-p',e.plazas);
+ sv('em-eid',id);sv('em-n',e.nombre);sv('em-c',e.cif);sv('em-r',e.representante);sv('em-d',e.direccion);sv('em-ci',e.ciudad);sv('em-cp',e.cp);sv('em-ct',e.contacto);sv('em-tu',e.tutor_empresa);sv('em-t',e.tel);sv('em-e',e.email);sv('em-nc',e.id||'');sv('em-fc',e.fecha_convenio);sv('em-p',e.plazas);
  g('modal-em').classList.add('open');
 }
 async function delEm(id){

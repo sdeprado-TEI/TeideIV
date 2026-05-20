@@ -34,6 +34,8 @@ class AlumnoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class EmpresaSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
     class Meta:
         model = Empresa
         fields = '__all__'
