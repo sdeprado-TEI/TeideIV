@@ -35,12 +35,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gray100);color:
 .role-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--gray100);border-radius:var(--rsm);padding:3px;margin-bottom:20px}
 .role-tab{padding:9px;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px;color:var(--gray500);transition:all .2s}
 .role-tab.active{background:var(--white);color:var(--g700);box-shadow:var(--sh)}
-.fg{margin-bottom:13px}
-.fg label{display:block;font-size:11.5px;font-weight:700;color:var(--gray600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.fg input,.fg select,.fg textarea{width:100%;background:var(--gray50);border:1.5px solid var(--gray200);border-radius:var(--rsm);color:var(--gray900);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:10px 12px;outline:none;transition:all .2s}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--g500);background:var(--white);box-shadow:0 0 0 3px rgba(34,197,94,.1)}
+.fg{margin-bottom:14px;position:relative}
+.fg label{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--gray500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.fg label.req::after{content:'*';color:#f43f5e;font-size:13px;line-height:1;margin-left:1px}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--white);border:1.5px solid var(--gray200);border-radius:var(--rsm);color:var(--gray900);font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;padding:10px 13px;outline:none;transition:border-color .18s,box-shadow .18s,background .18s}
+.fg input:hover,.fg select:hover{border-color:var(--gray300)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--g500);background:var(--white);box-shadow:0 0 0 3.5px rgba(34,197,94,.13)}
+.fg input.err,.fg select.err,.fg textarea.err{border-color:#f43f5e;box-shadow:0 0 0 3px rgba(244,63,94,.1);animation:shake .3s ease}
+.fg .hint{font-size:11px;color:var(--gray400);margin-top:4px}
 .fg textarea{resize:vertical;min-height:80px}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239ca3af' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
 .fg select option{background:var(--white)}
+.form-sep{height:1px;background:var(--gray100);margin:18px 0}
+.form-section-label{font-size:10.5px;font-weight:700;color:var(--gray400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;margin-top:4px}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 17px;border:none;border-radius:var(--rsm);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap;line-height:1}
@@ -156,15 +164,16 @@ tbody td{padding:8px 10px;vertical-align:middle}
 .pb-btn:disabled{opacity:.3;cursor:not-allowed}
 .ps-sel{background:var(--white);border:1.5px solid var(--gray200);border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;padding:5px 7px;color:var(--gray600);cursor:pointer;outline:none}
 .ps-sel:focus{border-color:var(--g400)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.5);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:var(--rlg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:fadeUp .22s ease;box-shadow:0 40px 100px rgba(0,0,0,.2)}
-.mh{padding:20px 20px 14px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
-.mh h2{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--g900)}
-.mc-btn{width:28px;height:28px;background:var(--gray100);border:none;border-radius:7px;color:var(--gray400);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.mc-btn:hover{background:var(--gray200);color:var(--gray700)}
-.mb{padding:20px}
-.mf{padding:14px 20px;border-top:1px solid var(--gray100);display:flex;justify-content:flex-end;gap:8px;background:var(--gray50);border-radius:0 0 var(--rlg) var(--rlg)}
+.modal{background:var(--white);border-radius:var(--rlg);width:100%;max-width:540px;max-height:92vh;overflow-y:auto;animation:fadeUp .22s cubic-bezier(.34,1.4,.64,1);box-shadow:0 32px 80px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.04)}
+.modal::before{content:'';display:block;height:3px;background:linear-gradient(90deg,var(--g500),var(--g400));border-radius:var(--rlg) var(--rlg) 0 0}
+.mh{padding:18px 20px 14px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1}
+.mh h2{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--g900);display:flex;align-items:center;gap:8px}
+.mc-btn{width:30px;height:30px;background:var(--gray100);border:none;border-radius:8px;color:var(--gray400);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mc-btn:hover{background:#fee2e2;color:#ef4444}
+.mb{padding:22px 22px 10px}
+.mf{padding:14px 22px;border-top:1px solid var(--gray100);display:flex;justify-content:flex-end;gap:8px;background:var(--gray50);border-radius:0 0 var(--rlg) var(--rlg);position:sticky;bottom:0}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .info-b{background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--rsm);padding:10px 13px;font-size:13px;color:var(--g800);margin-bottom:16px;display:flex;gap:8px}
 #toast{position:fixed;bottom:22px;right:22px;background:var(--g900);color:var(--white);border-radius:var(--rsm);padding:12px 17px;display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:500;box-shadow:0 20px 60px rgba(0,0,0,.3);z-index:1000;transform:translateY(80px);opacity:0;transition:all .28s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
@@ -350,75 +359,79 @@ tbody td{padding:8px 10px;vertical-align:middle}
 <!-- MODAL ALUMNO -->
 <div class="modal-overlay" id="modal-al">
  <div class="modal">
- <div class="mh"><h2 id="modal-al-t"> Nuevo Alumno</h2><button class="mc-btn" onclick="closeM('modal-al')">×</button></div>
+ <div class="mh"><h2 id="modal-al-t">👤 Nuevo Alumno</h2><button class="mc-btn" onclick="closeM('modal-al')">×</button></div>
  <div class="mb">
  <input type="hidden" id="al-eid">
+ <div class="form-section-label">Datos personales</div>
  <div class="g2">
- <div class="fg"><label>Nombre *</label><input id="al-n" placeholder="Carlos"></div>
- <div class="fg"><label>Apellidos *</label><input id="al-ap" placeholder="García López"></div>
+ <div class="fg"><label class="req">Nombre</label><input id="al-n" placeholder="Carlos"></div>
+ <div class="fg"><label class="req">Apellidos</label><input id="al-ap" placeholder="García López"></div>
  </div>
  <div class="g2">
- <div class="fg"><label>DNI *</label><input id="al-d" placeholder="12345678A"></div>
+ <div class="fg"><label class="req">DNI</label><input id="al-d" placeholder="12345678A"></div>
  <div class="fg"><label>Teléfono</label><input id="al-t" placeholder="600 000 000"></div>
  </div>
+ <div class="g2">
  <div class="fg"><label>Email</label><input id="al-e" type="email" placeholder="alumno@correo.com"></div>
- <div class="g2">
  <div class="fg"><label>Fecha nacimiento</label><input id="al-fn" type="date"></div>
+ </div>
  <div class="fg"><label>Población</label><input id="al-p" placeholder="Madrid"></div>
- </div>
+ <div class="form-sep"></div>
+ <div class="form-section-label">Datos académicos</div>
  <div class="g2">
- <div class="fg"><label>Ciclo formativo</label>
- <select id="al-c"></select>
- </div>
+ <div class="fg"><label>Ciclo formativo</label><select id="al-c"></select></div>
  <div class="fg"><label>Año curso</label><select id="al-cu"></select></div>
  </div>
- <div class="fg"><label>Año</label><select id="al-an"><option>Primero</option><option>Segundo</option></select></div>
  <div class="g2">
+ <div class="fg"><label>Año</label><select id="al-an"><option>Primero</option><option>Segundo</option></select></div>
  <div class="fg"><label>Grado</label><select id="al-g"><option>GS</option><option>FP</option><option>CFGM</option><option>CFGS</option></select></div>
+ </div>
+ <div class="g2">
  <div class="fg"><label>Turno</label><select id="al-tu"><option>M</option><option>T</option></select></div>
+ <div class="fg"><label>Nº alumno</label><input id="al-na" type="number" placeholder="123"></div>
  </div>
- <div class="fg"><label>Número alumno</label><input id="al-na" type="number" placeholder="123"></div>
- <div class="fg"><label>Observaciones</label><textarea id="al-o" placeholder="Notas…"></textarea></div>
+ <div class="fg"><label>Observaciones</label><textarea id="al-o" placeholder="Notas adicionales…"></textarea></div>
  </div>
- <div class="mf"><button class="btn btn-g" onclick="closeM('modal-al')">Cancelar</button><button class="btn btn-p" onclick="saveAl()">Guardar alumno</button></div>
+ <div class="mf"><button class="btn btn-g" onclick="closeM('modal-al')">Cancelar</button><button class="btn btn-p btn-lg" onclick="saveAl()">Guardar alumno</button></div>
  </div>
 </div>
 
 <!-- MODAL EMPRESA -->
 <div class="modal-overlay" id="modal-em">
  <div class="modal">
- <div class="mh"><h2 id="modal-em-t"> Nueva Empresa</h2><button class="mc-btn" onclick="closeM('modal-em')">×</button></div>
+ <div class="mh"><h2 id="modal-em-t">🏢 Nueva Empresa</h2><button class="mc-btn" onclick="closeM('modal-em')">×</button></div>
  <div class="mb">
  <input type="hidden" id="em-eid">
+ <div class="form-section-label">Identificación</div>
  <div class="g2">
- <div class="fg"><label>Nombre *</label><input id="em-n" placeholder="TechSoft S.L."></div>
- <div class="fg"><label>CIF *</label><input id="em-c" placeholder="B12345678"></div>
+ <div class="fg"><label class="req">Nombre empresa</label><input id="em-n" placeholder="TechSoft S.L."></div>
+ <div class="fg"><label class="req">CIF</label><input id="em-c" placeholder="B12345678"></div>
  </div>
  <div class="g2">
- <div class="fg"><label>Representante legal</label><input id="em-r" placeholder="Juan Pérez García"></div>
+ <div class="fg"><label>Nº convenio</label><input id="em-nc" type="number" placeholder="Auto si se deja vacío"></div>
+ <div class="fg"><label>Fecha convenio</label><input id="em-fc" type="date"></div>
+ </div>
+ <div class="form-sep"></div>
+ <div class="form-section-label">Dirección</div>
  <div class="fg"><label>Dirección</label><input id="em-d" placeholder="Calle Mayor, 123"></div>
- </div>
  <div class="g2">
  <div class="fg"><label>Ciudad</label><input id="em-ci" placeholder="Madrid"></div>
  <div class="fg"><label>Código postal</label><input id="em-cp" placeholder="28001"></div>
  </div>
+ <div class="form-sep"></div>
+ <div class="form-section-label">Contacto</div>
+ <div class="fg"><label>Representante legal</label><input id="em-r" placeholder="Juan Pérez García"></div>
  <div class="g2">
  <div class="fg"><label>Persona de contacto</label><input id="em-ct" placeholder="Ana Martínez"></div>
  <div class="fg"><label>Tutor empresa</label><input id="em-tu" placeholder="Carlos López"></div>
  </div>
  <div class="g2">
  <div class="fg"><label>Teléfono</label><input id="em-t" placeholder="91 000 00 00"></div>
- <div class="fg"><label>Email contacto</label><input id="em-e" type="email" placeholder="contacto@empresa.com"></div>
+ <div class="fg"><label>Email</label><input id="em-e" type="email" placeholder="contacto@empresa.com"></div>
  </div>
- <div class="g2">
- <div class="fg"><label>Número de convenio</label><input id="em-nc" placeholder="Ej: 1234"></div>
- <div class="fg"><label>Fecha convenio</label><input id="em-fc" type="date"></div>
+ <div class="fg"><label>Plazas disponibles</label><input id="em-p" type="number" min="1" max="50" value="2"><div class="hint">Número de alumnos que puede acoger</div></div>
  </div>
- <div class="g2">
- <div class="fg"><label>Plazas disponibles</label><input id="em-p" type="number" min="1" max="50" value="2"></div>
- </div>
- </div>
- <div class="mf"><button class="btn btn-g" onclick="closeM('modal-em')">Cancelar</button><button class="btn btn-p" onclick="saveEm()">Guardar empresa</button></div>
+ <div class="mf"><button class="btn btn-g" onclick="closeM('modal-em')">Cancelar</button><button class="btn btn-p btn-lg" onclick="saveEm()">Guardar empresa</button></div>
  </div>
 </div>
 
@@ -427,26 +440,33 @@ tbody td{padding:8px 10px;vertical-align:middle}
  <div class="modal">
  <div class="mh"><h2> Nueva Asignación</h2><button class="mc-btn" onclick="closeM('modal-asig')">×</button></div>
  <div class="mb">
- <div class="info-b">ℹ Vincula un alumno a una empresa para el período de prácticas FFE.</div>
  <input type="hidden" id="as-eid">
- <div class="fg"><label>Alumno *</label><select id="as-al"></select></div>
+ <div class="form-section-label">Participantes</div>
+ <div class="fg"><label class="req">Alumno</label><select id="as-al"></select></div>
  <div class="g2">
- <div class="fg"><label>Nº convenio empresa</label><input id="as-nc" type="number" placeholder="Ej: 1234" oninput="buscarEmpresaPorConvenio(this.value)"></div>
- <div class="fg"><label>Empresa *</label><select id="as-em" onchange="mostrarConvenioEmpresa(this.value)"></select></div>
+ <div class="fg"><label>Nº convenio</label><input id="as-nc" type="number" placeholder="Escribe el nº para buscar…" oninput="buscarEmpresaPorConvenio(this.value)"></div>
+ <div class="fg"><label class="req">Empresa</label><select id="as-em" onchange="mostrarConvenioEmpresa(this.value)"></select></div>
  </div>
  <div class="fg"><label>Tutor en empresa</label><input id="as-tu" placeholder="Nombre del tutor/a"></div>
+ <div class="form-sep"></div>
+ <div class="form-section-label">Período de prácticas</div>
  <div class="g2">
- <div class="fg"><label>Fecha inicio *</label><input id="as-ini" type="date"></div>
- <div class="fg"><label>Fecha fin *</label><input id="as-fin" type="date"></div>
+ <div class="fg"><label class="req">Fecha inicio</label><input id="as-ini" type="date"></div>
+ <div class="fg"><label class="req">Fecha fin</label><input id="as-fin" type="date"></div>
  </div>
- <div class="fg"><label>Fecha firma</label><input id="as-firma" type="date"></div>
+ <div class="g2">
+ <div class="fg"><label>Fecha firma convenio</label><input id="as-firma" type="date"></div>
+ <div class="fg"></div>
+ </div>
+ <div class="form-sep"></div>
+ <div class="form-section-label">Horas</div>
  <div class="g2">
  <div class="fg"><label>Total horas</label><input id="as-h" type="number" value="400" min="1"></div>
  <div class="fg"><label>Horas completadas</label><input id="as-hc" type="number" value="0" min="0"></div>
  </div>
- <div class="fg"><label>Observaciones</label><textarea id="as-o" placeholder="Notas…"></textarea></div>
+ <div class="fg"><label>Observaciones</label><textarea id="as-o" placeholder="Notas adicionales…"></textarea></div>
  </div>
- <div class="mf"><button class="btn btn-g" onclick="closeM('modal-asig')">Cancelar</button><button class="btn btn-s" onclick="saveAs()">Guardar asignación</button></div>
+ <div class="mf"><button class="btn btn-g" onclick="closeM('modal-asig')">Cancelar</button><button class="btn btn-p btn-lg" onclick="saveAs()">Guardar asignación</button></div>
  </div>
 </div>
 
@@ -1092,7 +1112,10 @@ function getCookie(name){
 async function saveAl(){
   const id = gv('al-eid');
   const o = {nombre:gv('al-n'),apellidos:gv('al-ap'),dni:gv('al-d'),tlf_movil:gv('al-t'),email:gv('al-e'),fecha_nto:gv('al-fn'),poblacion:gv('al-p'),ciclo:gv('al-c'),curso:gv('al-cu'),ano:gv('al-an'),grado:gv('al-g'),turno:gv('al-tu'),num_alumno:gv('al-na'),obs:gv('al-o')};
-  if(!o.nombre||!o.apellidos||!o.dni){toast('Rellena los campos obligatorios (*)','err');return}
+  const alReq=[['al-n',o.nombre],['al-ap',o.apellidos],['al-d',o.dni]];
+  const alErr=alReq.filter(([,v])=>!v);
+  alErr.forEach(([id])=>{const el=g(id);el.classList.add('err');setTimeout(()=>el.classList.remove('err'),1000);});
+  if(alErr.length){toast('Rellena los campos obligatorios','err');return}
 
   const url = id ? `/api/alumno/editar/${id}/` : '/api/alumno/crear/';
   const method = id ? 'PUT' : 'POST';
@@ -1161,7 +1184,10 @@ async function saveEm(){
  const id=gv('em-eid');
  const numConv=parseInt(gv('em-nc'))||null;
  const o={...(numConv&&!id?{id:numConv}:{}),nombre:gv('em-n'),cif:gv('em-c'),representante:gv('em-r'),direccion:gv('em-d'),ciudad:gv('em-ci'),cp:gv('em-cp'),contacto:gv('em-ct'),tutor_empresa:gv('em-tu'),tel:gv('em-t'),email:gv('em-e'),fecha_convenio:gv('em-fc')||null,plazas:parseInt(gv('em-p'))||2};
- if(!o.nombre||!o.cif){toast('Rellena los campos obligatorios (*)','err');return}
+ const emReq=[['em-n',o.nombre],['em-c',o.cif]];
+ const emErr=emReq.filter(([,v])=>!v);
+ emErr.forEach(([id])=>{const el=g(id);el.classList.add('err');setTimeout(()=>el.classList.remove('err'),1000);});
+ if(emErr.length){toast('Rellena los campos obligatorios','err');return}
  const url=id?`/api/empresa/editar/${id}/`:'/api/empresa/crear/';
  const method=id?'PUT':'POST';
  try{
@@ -1228,7 +1254,10 @@ function mostrarConvenioEmpresa(val){
 async function saveAs(){
  const id=gv('as-eid');
  const o={alumnoId:parseInt(gv('as-al')),empresaId:parseInt(gv('as-em')),tutor:gv('as-tu'),inicio:gv('as-ini'),fin:gv('as-fin'),horas:parseInt(gv('as-h'))||400,horasComp:parseInt(gv('as-hc'))||0,obs:gv('as-o'),fechaFirma:gv('as-firma')||null};
- if(!o.alumnoId||!o.empresaId||!o.inicio||!o.fin){toast('Rellena los campos obligatorios','err');return}
+ const asReq=[['as-al',o.alumnoId],['as-em',o.empresaId],['as-ini',o.inicio],['as-fin',o.fin]];
+ const asErr=asReq.filter(([,v])=>!v);
+ asErr.forEach(([id])=>{const el=g(id);el.classList.add('err');setTimeout(()=>el.classList.remove('err'),1000);});
+ if(asErr.length){toast('Rellena los campos obligatorios','err');return}
  const apiData={alumno:o.alumnoId,empresa:o.empresaId,tutor_centro:o.tutor,inicio:o.inicio,fin:o.fin,horas:o.horas,horas_comp:o.horasComp,obs:o.obs,fecha_firma:o.fechaFirma};
  const url=id?`/api/asignacion/editar/${id}/`:'/api/asignacion/crear/';
  const method=id?'PUT':'POST';
