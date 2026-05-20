@@ -430,7 +430,10 @@ tbody td{padding:8px 10px;vertical-align:middle}
  <div class="info-b">ℹ Vincula un alumno a una empresa para el período de prácticas FFE.</div>
  <input type="hidden" id="as-eid">
  <div class="fg"><label>Alumno *</label><select id="as-al"></select></div>
- <div class="fg"><label>Empresa *</label><select id="as-em"></select></div>
+ <div class="g2">
+ <div class="fg"><label>Nº convenio empresa</label><input id="as-nc" type="number" placeholder="Ej: 1234" oninput="buscarEmpresaPorConvenio(this.value)"></div>
+ <div class="fg"><label>Empresa *</label><select id="as-em" onchange="mostrarConvenioEmpresa(this.value)"></select></div>
+ </div>
  <div class="fg"><label>Tutor en empresa</label><input id="as-tu" placeholder="Nombre del tutor/a"></div>
  <div class="g2">
  <div class="fg"><label>Fecha inicio *</label><input id="as-ini" type="date"></div>
@@ -1212,6 +1215,16 @@ function fillAsSelects(){
  g('as-al').innerHTML=['<option value="">Selecciona alumno</option>',...[...alumnos].sort((a,b)=> (a.nombre + ' ' + a.apellidos).localeCompare(b.nombre + ' ' + b.apellidos)).map(a=>`<option value="${a.id}">${a.nombre} ${a.apellidos} (${a.dni || 'Sin DNI'})</option>`)].join('');
  g('as-em').innerHTML=['<option value="">Selecciona empresa</option>',...[...empresas].sort((a,b)=> a.nombre.localeCompare(b.nombre)).map(e=>`<option value="${e.id}">${e.nombre} - ${e.direccion || 'Sin dirección'}, ${e.ciudad || 'Sin ciudad'} (${e.cif || 'Sin CIF'})</option>`)].join('');
 }
+function buscarEmpresaPorConvenio(val){
+ if(!val){g('as-em').value='';return;}
+ const emp=empresas.find(e=>String(e.id)===String(val));
+ if(emp) g('as-em').value=emp.id;
+}
+function mostrarConvenioEmpresa(val){
+ if(!val){sv('as-nc','');return;}
+ const emp=empresas.find(e=>String(e.id)===String(val));
+ if(emp) sv('as-nc',emp.id);
+}
 async function saveAs(){
  const id=gv('as-eid');
  const o={alumnoId:parseInt(gv('as-al')),empresaId:parseInt(gv('as-em')),tutor:gv('as-tu'),inicio:gv('as-ini'),fin:gv('as-fin'),horas:parseInt(gv('as-h'))||400,horasComp:parseInt(gv('as-hc'))||0,obs:gv('as-o'),fechaFirma:gv('as-firma')||null};
@@ -1252,7 +1265,7 @@ async function delAs(id){
 function openM(id){
  if(id==='modal-al'){g('modal-al-t').textContent=' Nuevo Alumno'; fillCycleSelect(); fillYearSelect(); ['al-eid','al-n','al-ap','al-d','al-t','al-e','al-fn','al-p','al-cu','al-an','al-g','al-tu','al-na','al-o'].forEach(x=>sv(x,''))}
  if(id==='modal-em'){g('modal-em-t').textContent=' Nueva Empresa';['em-eid','em-n','em-c','em-r','em-d','em-ci','em-cp','em-ct','em-tu','em-t','em-e','em-nc','em-fc'].forEach(x=>sv(x,''));sv('em-p',2)}
- if(id==='modal-asig'){fillAsSelects();['as-eid','as-al','as-em','as-tu','as-ini','as-fin','as-firma','as-o'].forEach(x=>sv(x,''));sv('as-h',400);sv('as-hc',0)}
+ if(id==='modal-asig'){fillAsSelects();['as-eid','as-al','as-em','as-nc','as-tu','as-ini','as-fin','as-firma','as-o'].forEach(x=>sv(x,''));sv('as-h',400);sv('as-hc',0)}
  g(id).classList.add('open');
 }
 function closeM(id){g(id).classList.remove('open')}
