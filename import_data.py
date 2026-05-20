@@ -301,7 +301,7 @@ def import_all():
 
     print(f"  Importadas: {ok}  |  Omitidas: {skipped}")
 
-    # ── Actualizar secuencias SQLite ──────────────────────────────────────────
+    # ── Actualizar secuencias de auto-incremento ──────────────────────────────
     from django.db import connection as conn
     if 'sqlite' in conn.vendor:
         import sqlite3 as _sqlite3
@@ -320,6 +320,15 @@ def import_all():
                 print(f"  {table}: siguiente ID será {max_id + 1}")
         raw.commit()
         raw.close()
+    elif 'postgresql' in conn.vendor:
+        print("\nActualizando secuencias PostgreSQL...")
+        with conn.cursor() as cursor:
+            for table in ('gestion_alumno', 'gestion_empresa', 'gestion_asignacion', 'gestion_ciclo'):
+                cursor.execute(
+                    f"SELECT setval(pg_get_serial_sequence('{table}', 'id'), COALESCE(MAX(id), 1)) FROM \"{table}\""
+                )
+                next_id = cursor.fetchone()[0]
+                print(f"  {table}: secuencia reiniciada a {next_id}")
 
     print("\n¡Importación completa!")
 

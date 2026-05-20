@@ -411,7 +411,10 @@ tbody td{padding:8px 10px;vertical-align:middle}
  <div class="fg"><label>Email contacto</label><input id="em-e" type="email" placeholder="contacto@empresa.com"></div>
  </div>
  <div class="g2">
+ <div class="fg"><label>Número de convenio</label><input id="em-nc" placeholder="Ej: 1234"></div>
  <div class="fg"><label>Fecha convenio</label><input id="em-fc" type="date"></div>
+ </div>
+ <div class="g2">
  <div class="fg"><label>Plazas disponibles</label><input id="em-p" type="number" min="1" max="50" value="2"></div>
  </div>
  </div>
@@ -1153,7 +1156,7 @@ function assignEm(id){
 // CRUD EMPRESAS 
 async function saveEm(){
  const id=gv('em-eid');
- const o={nombre:gv('em-n'),cif:gv('em-c'),representante:gv('em-r'),direccion:gv('em-d'),ciudad:gv('em-ci'),cp:gv('em-cp'),contacto:gv('em-ct'),tutor_empresa:gv('em-tu'),tel:gv('em-t'),email:gv('em-e'),fecha_convenio:gv('em-fc')||null,plazas:parseInt(gv('em-p'))||2};
+ const o={nombre:gv('em-n'),cif:gv('em-c'),representante:gv('em-r'),direccion:gv('em-d'),ciudad:gv('em-ci'),cp:gv('em-cp'),contacto:gv('em-ct'),tutor_empresa:gv('em-tu'),tel:gv('em-t'),email:gv('em-e'),num_convenio:gv('em-nc')||null,fecha_convenio:gv('em-fc')||null,plazas:parseInt(gv('em-p'))||2};
  if(!o.nombre||!o.cif){toast('Rellena los campos obligatorios (*)','err');return}
  const url=id?`/api/empresa/editar/${id}/`:'/api/empresa/crear/';
  const method=id?'PUT':'POST';
@@ -1164,13 +1167,17 @@ async function saveEm(){
    if(id){Object.assign(empresas.find(x=>x.id==id),saved);toast(`Empresa actualizada (ID: ${saved.id})`,'ok');}
    else{empresas.push(saved);toast(`Empresa creada correctamente (ID: ${saved.id})`,'ok');}
    closeM('modal-em');renderAll();
-  }else{toast('Error al guardar la empresa','err');}
- }catch(e){toast('Error de conexión','err');}
+  }else{
+   let errMsg='Error al guardar la empresa';
+   try{const errData=await res.json();const firstErr=Object.entries(errData).map(([k,v])=>`${k}: ${[].concat(v)[0]}`)[0];if(firstErr)errMsg=firstErr;}catch(_){}
+   toast(errMsg,'err');
+  }
+ }catch(e){toast('Error de conexión: '+e.message,'err');}
 }
 function edEm(id){
  const e=empresas.find(x=>x.id===id);
  g('modal-em-t').textContent=' Editar Empresa';
- sv('em-eid',id);sv('em-n',e.nombre);sv('em-c',e.cif);sv('em-r',e.representante);sv('em-d',e.direccion);sv('em-ci',e.ciudad);sv('em-cp',e.cp);sv('em-ct',e.contacto);sv('em-tu',e.tutor_empresa);sv('em-t',e.tel);sv('em-e',e.email);sv('em-fc',e.fecha_convenio);sv('em-p',e.plazas);
+ sv('em-eid',id);sv('em-n',e.nombre);sv('em-c',e.cif);sv('em-r',e.representante);sv('em-d',e.direccion);sv('em-ci',e.ciudad);sv('em-cp',e.cp);sv('em-ct',e.contacto);sv('em-tu',e.tutor_empresa);sv('em-t',e.tel);sv('em-e',e.email);sv('em-nc',e.num_convenio||'');sv('em-fc',e.fecha_convenio);sv('em-p',e.plazas);
  g('modal-em').classList.add('open');
 }
 async function delEm(id){
@@ -1243,7 +1250,7 @@ async function delAs(id){
 // MODALS 
 function openM(id){
  if(id==='modal-al'){g('modal-al-t').textContent=' Nuevo Alumno'; fillCycleSelect(); fillYearSelect(); ['al-eid','al-n','al-ap','al-d','al-t','al-e','al-fn','al-p','al-cu','al-an','al-g','al-tu','al-na','al-o'].forEach(x=>sv(x,''))}
- if(id==='modal-em'){g('modal-em-t').textContent=' Nueva Empresa';['em-eid','em-n','em-c','em-r','em-d','em-ci','em-cp','em-ct','em-tu','em-t','em-e','em-fc'].forEach(x=>sv(x,''));sv('em-p',2)}
+ if(id==='modal-em'){g('modal-em-t').textContent=' Nueva Empresa';['em-eid','em-n','em-c','em-r','em-d','em-ci','em-cp','em-ct','em-tu','em-t','em-e','em-nc','em-fc'].forEach(x=>sv(x,''));sv('em-p',2)}
  if(id==='modal-asig'){fillAsSelects();['as-eid','as-al','as-em','as-tu','as-ini','as-fin','as-firma','as-o'].forEach(x=>sv(x,''));sv('as-h',400);sv('as-hc',0)}
  g(id).classList.add('open');
 }
