@@ -32,7 +32,7 @@ class Alumno(models.Model):
 
 class Empresa(models.Model):
     nombre = models.CharField(max_length=255)
-    cif = models.CharField(max_length=20, unique=True)
+    cif = models.CharField(max_length=20)
     representante = models.CharField(max_length=255, blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)
     ciudad = models.CharField(max_length=100, blank=True, null=True)
