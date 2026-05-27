@@ -11,7 +11,7 @@ class Alumno(models.Model):
     GRADO_CHOICES = [('GS', 'Grado Superior'), ('GM', 'Grado Medio'), ('B', 'Básica'), ('FPB', 'FP Básica')]
     TURNO_CHOICES = [('M', 'Mañana'), ('T', 'Tarde'), ('O', 'Online')]
 
-    dni = models.CharField(max_length=20, unique=True)
+    dni = models.CharField(max_length=20)
     apellidos = models.CharField(max_length=255)
     nombre = models.CharField(max_length=255)
     fecha_nto = models.DateField(null=True, blank=True)
